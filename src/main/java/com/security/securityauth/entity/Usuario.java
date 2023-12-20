@@ -19,7 +19,7 @@ public class Usuario  implements UserDetails {
     @Id
     private long id;
     @Column
-    private String login;
+    private String username;
     @Column
     private String password;
     @Column
@@ -29,19 +29,20 @@ public class Usuario  implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    public Usuario(String login, String encryptedPassword, UserRole role) {
+    public Usuario() {
     }
 
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public void setPassword(String password) {
+    /**
+     * Necessário construtor com atributos para popular objeto de retorno da requisição GET
+     *
+     * @param username
+     * @param password
+     * @param role
+     */
+    public Usuario(String username, String password, UserRole role) {
+        this.username = username;
         this.password = password;
+        this.role = role;
     }
 
     public UserRole getRole() {
@@ -69,13 +70,22 @@ public class Usuario  implements UserDetails {
     }
 
     @Override
+    public String getUsername() {
+        return username;
+    }
+
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    @Override
     public String getPassword() {
         return password;
     }
 
-    @Override
-    public String getUsername() {
-        return login;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override

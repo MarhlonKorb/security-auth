@@ -5,6 +5,8 @@ import com.security.securityauth.dto.LoginResponseDTO;
 import com.security.securityauth.dto.RegisterDTO;
 import com.security.securityauth.entity.Usuario;
 import com.security.securityauth.entity.UsuarioRepository;
+import com.security.securityauth.enums.RolePermission;
+import com.security.securityauth.enums.UserRole;
 import com.security.securityauth.security.services.TokenService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Controller que valida a autenticação do usuário
@@ -44,12 +43,18 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody @Valid RegisterDTO data) {
-        if (usuarioRepository.findByLogin(data.login()) != null) {
+        if (usuarioRepository.findByUsername(data.login()) != null) {
             return ResponseEntity.badRequest().build();
         }
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
         var newUser = new Usuario(data.login(), encryptedPassword, data.role());
         usuarioRepository.save(newUser);
         return ResponseEntity.ok().build();
+    }
+    @GetMapping("/recurso-protegido")
+    @RolePermission(roles = {UserRole.USER})
+    public ResponseEntity<String> recursoProtegido() {
+        // Lógica do endpoint aqui
+        return ResponseEntity.ok("Este é um recurso protegido!");
     }
 }
