@@ -5,8 +5,6 @@ import com.security.securityauth.dto.LoginResponseDTO;
 import com.security.securityauth.dto.RegisterDTO;
 import com.security.securityauth.entity.Usuario;
 import com.security.securityauth.entity.UsuarioRepository;
-import com.security.securityauth.enums.RolePermission;
-import com.security.securityauth.enums.UserRole;
 import com.security.securityauth.security.services.TokenService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,8 +49,8 @@ public class AuthenticationController {
         usuarioRepository.save(newUser);
         return ResponseEntity.ok().build();
     }
+
     @GetMapping("/recurso-protegido")
-    @RolePermission(roles = {UserRole.USER})
     public ResponseEntity<String> recursoProtegido() {
         // Lógica do endpoint aqui
         return ResponseEntity.ok("Este é um recurso protegido!");
