@@ -1,4 +1,4 @@
-package com.security.securityauth.security.services;
+package com.security.securityauth.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

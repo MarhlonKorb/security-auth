@@ -1,4 +1,4 @@
-package com.security.securityauth.enums;
+package com.security.securityauth.entity.enums;
 
 public enum UserRole {
     // AE = Admin Empresa

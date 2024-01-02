@@ -1,6 +1,5 @@
-package com.security.securityauth.security;
+package com.security.securityauth.config;
 
-import com.security.securityauth.enums.UserRole;
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,9 +55,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/v3/api-docs/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/auth/recurso-protegido").hasRole(UserRole.ADMIN.name())
+                        .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

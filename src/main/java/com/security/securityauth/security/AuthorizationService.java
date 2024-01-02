@@ -1,4 +1,4 @@
-package com.security.securityauth.security.services;
+package com.security.securityauth.security;
 
 import com.security.securityauth.entity.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ public class AuthorizationService implements UserDetailsService {
     private UsuarioRepository usuarioRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return usuarioRepository.findByUsername(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return usuarioRepository.findByEmail(email);
     }
 }

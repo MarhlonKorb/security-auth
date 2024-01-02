@@ -1,12 +1,12 @@
 package com.security.securityauth.entity;
 
-import com.security.securityauth.enums.Status;
-import com.security.securityauth.enums.UserRole;
+import com.security.securityauth.abstractentities.EntidadeAuditada;
+import com.security.securityauth.entity.enums.Status;
+import com.security.securityauth.entity.enums.UserRole;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.Collection;
 import java.util.List;
 
@@ -14,13 +14,10 @@ import java.util.List;
  * Entidade Usuario
  */
 @Entity
-public class Usuario  implements UserDetails {
+public class Usuario extends EntidadeAuditada implements UserDetails {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
     @Column
-    private String username;
+    private String email;
     @Column
     private String password;
     @Column
@@ -36,12 +33,12 @@ public class Usuario  implements UserDetails {
     /**
      * Necessário construtor com atributos para popular objeto de retorno da requisição GET
      *
-     * @param username
+     * @param email
      * @param password
      * @param role
      */
-    public Usuario(String username, String password, UserRole role) {
-        this.username = username;
+    public Usuario(String email, String password, UserRole role) {
+        this.email = email;
         this.password = password;
         this.role = role;
     }
@@ -64,7 +61,7 @@ public class Usuario  implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(this.role == UserRole.ADMIN) {
+        if (this.role == UserRole.ADMIN) {
             return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
         }
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
@@ -72,12 +69,11 @@ public class Usuario  implements UserDetails {
 
     @Override
     public String getUsername() {
-        return username;
+        return email;
     }
 
-
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override

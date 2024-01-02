@@ -1,6 +1,6 @@
 package com.security.securityauth.dto;
 
-import com.security.securityauth.enums.UserRole;
+import com.security.securityauth.entity.enums.UserRole;
 
-public record RegisterDTO(String login, String password, UserRole role) {
+public record RegisterDTO(String email, String password, UserRole role) {
 }

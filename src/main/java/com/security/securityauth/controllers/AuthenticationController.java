@@ -4,15 +4,16 @@ import com.security.securityauth.dto.AuthenticationDTO;
 import com.security.securityauth.dto.LoginResponseDTO;
 import com.security.securityauth.dto.RegisterDTO;
 import com.security.securityauth.entity.Usuario;
-import com.security.securityauth.entity.UsuarioRepository;
-import com.security.securityauth.security.services.TokenService;
+import com.security.securityauth.entity.UsuarioService;
+import com.security.securityauth.security.TokenService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Controller que valida a autenticação do usuário
@@ -21,18 +22,22 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("auth")
 public class AuthenticationController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private UsuarioRepository usuarioRepository;
-    @Autowired
-    private TokenService tokenService;
+    private final AuthenticationManager authenticationManager;
+
+    private final TokenService tokenService;
+
+    private final UsuarioService usuarioService;
+
+    public AuthenticationController(AuthenticationManager authenticationManager, TokenService tokenService, UsuarioService usuarioService) {
+        this.authenticationManager = authenticationManager;
+        this.tokenService = tokenService;
+        this.usuarioService = usuarioService;
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthenticationDTO data) {
-        var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
-        var auth = authenticationManager.authenticate(usernamePassword);
-
+        var emailPassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
+        var auth = authenticationManager.authenticate(emailPassword);
         // Gera o token para o usuário
         var token = tokenService.generateToken(
                 (Usuario) auth.getPrincipal());
@@ -41,18 +46,7 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody @Valid RegisterDTO data) {
-        if (usuarioRepository.findByUsername(data.login()) != null) {
-            return ResponseEntity.badRequest().build();
-        }
-        String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
-        var newUser = new Usuario(data.login(), encryptedPassword, data.role());
-        usuarioRepository.save(newUser);
+        usuarioService.create(data);
         return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/recurso-protegido")
-    public ResponseEntity<String> recursoProtegido() {
-        // Lógica do endpoint aqui
-        return ResponseEntity.ok("Este é um recurso protegido!");
     }
 }
